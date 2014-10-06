@@ -1,6 +1,6 @@
 @font-face {
   font-family: URWGroteskTextLigWid;
-  src: url(URWGroteskTextLigWid-Euro.ttf);
+  src: url(https://cdn.rawgit.com/trabe-teaching/cleaver-theme/master/URWGroteskTextLigWid-Euro.ttf);
 }
 
 body {
@@ -32,11 +32,13 @@ strong {
 .slide-content h2 {
   font-size: 2em;
   font-weight: bold;
+  margin-bottom: 0.5em;
 }
 
 .slide-content h3 {
   border: none;
   text-align: center;
+  margin-bottom: 0.3em;
 }
 
 .slide-content ul {
@@ -156,7 +158,29 @@ cite {
   font-size: 1.5em;
 }
 
-/* tweet slide */
-.tweet {
-  background: #c7ddec url(trabe-theme/bg_tweet.png) repeat-x;
+.code .slide-content {
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.code h2 {
+  font-size: 100%;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #666;
+  text-align: left;
+  width: 100%;
+}
+
+.code.sligthly-smaller pre {
+  font-size: 55%;
+}
+
+.two-columns .slide-content ul {
+  -webkit-column-count: 2;
+  font-size: 1.5em;
+}
+
+.humongous-code .slide-content {
+  font-family: monospace;
+  font-size: 60px;
 }
