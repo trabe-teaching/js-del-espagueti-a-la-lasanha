@@ -1,0 +1,1583 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>JS: del espagueti a la lasaña, paso a paso</title>
+  <style type="text/css">
+    body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #222;
+  background-color: #f7f7f7;
+  font-size: 100%;
+}
+
+.slide {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 0; right: 0;
+}
+
+.slide-content {
+  width: 800px;
+  height: 600px;
+  overflow: hidden;
+  margin: 80px auto 0 auto;
+  padding: 30px;
+
+  font-weight: 200;
+  font-size: 200%;
+  line-height: 1.375;
+}
+
+.controls {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+
+.arrow {
+  width: 0; height: 0;
+  border: 30px solid #333;
+  float: left;
+  margin-right: 30px;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.prev {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+
+  border-left-width: 0;
+  border-right-width: 50px;
+}
+
+.next {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-right-color: transparent;
+
+  border-left-width: 50px;
+  border-right-width: 0;
+}
+
+.prev:hover {
+  border-right-color: #888;
+  cursor: pointer;
+}
+
+.next:hover {
+  border-left-color: #888;
+  cursor: pointer;
+}
+
+h1 {
+  font-size: 300%;
+  line-height: 1.2;
+  text-align: center;
+  margin: 170px 0 0;
+}
+
+h2 {
+  font-size: 100%;
+  line-height: 1.2;
+  margin: 5px 0;
+  text-align: center;
+  font-weight: 200;
+}
+
+h3 {
+  font-size: 140%;
+  line-height: 1.2;
+  border-bottom: 1px solid #aaa;
+  margin: 0;
+  padding-bottom: 15px;
+}
+
+ul {
+  padding: 20px 0 0 60px;
+  font-weight: 200;
+  line-height: 1.375;
+}
+
+.author h1 {
+  font-size: 170%;
+  font-weight: 200;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.author h3 {
+  font-weight: 100;
+  text-align: center;
+  font-size: 95%;
+  border: none;
+}
+
+a {
+  text-decoration: none;
+  color: #44a4dd;
+}
+
+a:hover {
+  color: #66b5ff;
+}
+
+pre {
+  font-size: 60%;
+  line-height: 1.3;
+}
+
+.progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 3px;
+  background-color: #b4b4b4;
+
+  -webkit-transition: width 0.05s ease-out;
+  -moz-transition: width 0.05s ease-out;
+  -o-transition: width 0.05s ease-out;
+  transition: width 0.05s ease-out;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 850px) {
+
+  body {
+    font-size: 70%;
+  }
+
+  .slide-content {
+    width: auto;
+  }
+
+  img {
+    width: 100%;
+  }
+
+  h1 {
+    margin-top: 120px;
+  }
+
+  .prev, .prev:hover {
+    border-right-color: rgba(135, 135, 135, 0.5);
+  }
+
+  .next, .next:hover {
+    border-left-color: rgba(135, 135, 135, 0.5);
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 50%;
+    overflow: hidden;
+  }
+
+  .slide-content {
+    padding: 10px;
+    margin-top: 10px;
+    height: 340px;
+  }
+
+  h1 {
+    margin-top: 50px;
+  }
+
+  ul {
+    padding-left: 25px;
+  }
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact;
+  }
+
+  @page {
+    size: letter;
+  }
+
+  .hidden {
+    display: inline;
+  }
+
+  html {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  body {
+    margin: 0 auto !important;
+    border: 0;
+    padding: 0;
+    float: none !important;
+    overflow: visible;
+    background: none !important;
+    font-size: 52%;
+  }
+
+  .progress, .controls {
+    display: none;
+  }
+
+  .slide {
+    position: static;
+  }
+
+  .slide-content {
+    border: 1px solid #222;
+    margin-top: 0;
+    margin-bottom: 40px;
+    height: 3.5in;
+    overflow: visible;
+  }
+
+  .slide:nth-child(even) {
+    /* 2 slides per page */
+    page-break-before: always;
+  }
+}
+
+/*
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+*/
+
+code, pre {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  overflow: auto;
+  padding: 6px 10px;
+}
+
+code {
+  padding: 0 5px;
+}
+
+pre>code {
+  margin: 0; padding: 0;
+  border: none;
+  background: transparent;
+}
+
+pre .comment,
+pre .template_comment,
+pre .diff .header,
+pre .javadoc {
+  color: #998;
+  font-style: italic
+}
+
+pre .keyword,
+pre .css .rule .keyword,
+pre .winutils,
+pre .javascript .title,
+pre .nginx .title,
+pre .subst,
+pre .request,
+pre .status {
+  color: #333;
+  font-weight: bold
+}
+
+pre .number,
+pre .hexcolor,
+pre .ruby .constant {
+  color: #099;
+}
+
+pre .string,
+pre .tag .value,
+pre .phpdoc,
+pre .tex .formula {
+  color: #d14
+}
+
+pre .title,
+pre .id {
+  color: #900;
+  font-weight: bold
+}
+
+pre .javascript .title,
+pre .lisp .title,
+pre .clojure .title,
+pre .subst {
+  font-weight: normal
+}
+
+pre .class .title,
+pre .haskell .type,
+pre .vhdl .literal,
+pre .tex .command {
+  color: #458;
+  font-weight: bold
+}
+
+pre .tag,
+pre .tag .title,
+pre .rules .property,
+pre .django .tag .keyword {
+  color: #000080;
+  font-weight: normal
+}
+
+pre .attribute,
+pre .variable,
+pre .lisp .body {
+  color: #008080
+}
+
+pre .regexp {
+  color: #009926
+}
+
+pre .class {
+  color: #458;
+  font-weight: bold
+}
+
+pre .symbol,
+pre .ruby .symbol .string,
+pre .lisp .keyword,
+pre .tex .special,
+pre .prompt {
+  color: #990073
+}
+
+pre .built_in,
+pre .lisp .title,
+pre .clojure .built_in {
+  color: #0086b3
+}
+
+pre .preprocessor,
+pre .pi,
+pre .doctype,
+pre .shebang,
+pre .cdata {
+  color: #999;
+  font-weight: bold
+}
+
+pre .deletion {
+  background: #fdd
+}
+
+pre .addition {
+  background: #dfd
+}
+
+pre .diff .change {
+  background: #0086b3
+}
+
+pre .chunk {
+  color: #aaa
+}
+
+@font-face {
+  font-family: URWGroteskTextLigWid;
+  src: url(https://cdn.rawgit.com/trabe-teaching/cleaver-theme/master/URWGroteskTextLigWid-Euro.ttf);
+}
+
+body {
+  background: #f5f4f0;
+  color: #333;
+  font-family: URWGroteskTextLigWid, sans-serif;
+}
+
+strong {
+  color: #b00;
+}
+
+.slide-content {
+  width: 1024px;
+  height: 768px;
+  margin: 0 auto;
+  font-size: 40px;
+  text-align: center;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.slide-content h1 {
+  margin: 50px 0 50px 0;
+}
+
+.slide-content h2 {
+  font-size: 2em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.slide-content h3 {
+  border: none;
+  text-align: center;
+  margin-bottom: 0.3em;
+}
+
+.slide-content ul {
+  width: 100%;
+  padding: 0;
+  font-size: 1.2em;
+  list-style: none;
+}
+
+.slide-content pre {
+  text-align: left;
+  border: none;
+  margin: 0;
+}
+
+.slide-content code {
+  border: none;
+}
+
+.arrow {
+  border-width: 20px;
+}
+
+.prev {
+  border-right-width: 25px;
+}
+
+.next {
+  border-left-width: 25px;
+}
+
+/* jsbin slide */
+
+.jsbin iframe {
+  width: 1024px;
+  min-height: 768px ! important;
+}
+
+/* cover slide */
+.cover {
+  background: #ABC510;
+  color: #eee;
+}
+
+.cover .slide-content {
+  align-items: center;
+  text-align: center;
+}
+
+.cover h1 {
+  margin: 0 0 1em 0;
+  line-height: 1em;
+}
+
+.cover a {
+  color: #305309;
+}
+
+/* section slide */
+
+.section {
+  background: #1084C5;
+  color: #fff;
+}
+
+.section .slide-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+/* image slide */
+
+.image .slide-content {
+  padding: 0;
+}
+
+.image p {
+  margin: 0;
+}
+
+.image img {
+  width: 100%;
+  height: 100%;
+}
+
+.image.full-height img {
+  width: auto;
+  height: 768px;
+}
+
+.image.vcenter p {
+  width: 100%;
+}
+
+/* quote slide */
+.quote {
+  background: #222;
+  color: #fff;
+}
+
+.quote .slide-content {
+  position: relative;
+}
+
+.quote blockquote {
+  font-size: 130%;
+  text-align: left;
+  margin: 0;
+  padding: 0;
+}
+
+cite {
+  text-align: right;
+  display: block;
+  font-size: 1.5em;
+}
+
+.code .slide-content {
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.code h2 {
+  font-size: 100%;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #666;
+  text-align: left;
+  width: 100%;
+}
+
+.code.sligthly-smaller pre {
+  font-size: 55%;
+}
+
+.two-columns .slide-content ul {
+  -webkit-column-count: 2;
+  font-size: 1.5em;
+}
+
+.humongous-code .slide-content {
+  font-family: monospace;
+  font-size: 60px;
+}
+
+  </style>
+</head>
+<body>
+  
+  <div class="slide  cover" id="slide-1">
+    <section class="slide-content"><script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+<h1 id="js-del-espagueti-br-a-la-lasa-a-br-paso-a-paso">JS: del espagueti<br/>a la lasaña,<br/>paso a paso</h1>
+<h2 id="http-ir-gl-jsesalas"><a href="http://ir.gl/jsesalas">http://ir.gl/jsesalas</a></h2>
+</section>
+  </div>
+  <div class="slide hidden  image" id="slide-2">
+    <section class="slide-content"><p><img src="images/who_we_are.png" alt="Who we are"></p>
+</section>
+  </div>
+  <div class="slide hidden  image" id="slide-3">
+    <section class="slide-content"><p><img src="images/trabe.png" alt="Trabe"></p>
+<!-- a qué nos dedicamos, qué hacemos para quién, tecnologías, etc --></section>
+  </div>
+  <div class="slide hidden" id="slide-4">
+    <section class="slide-content"><h2 id="t-cnicas-para-br-estructurar-c-digo-js">Técnicas para<br/>estructurar código JS</h2>
+<h3 id="-con-ejemplos-_ad-hoc_-">(con ejemplos <em>ad hoc</em>)</h3>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-5">
+    <section class="slide-content"><h2 id="ideas-b-sicas">Ideas básicas</h2>
+<h3 id="js-no-es-dom">JS no es DOM</h3>
+<h3 id="jquery-no-es-js">jQuery no es JS</h3>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-6">
+    <section class="slide-content"><h2 id="los-comienzos">Los comienzos</h2>
+<pre><code class="lang-xml">
+
+<span class="tag">&lt;<span class="title">a</span> <span class="attribute">onclick</span>=<span class="value">"return confirm('Are you sure?');"</span>
+   <span class="attribute">href</span>=<span class="value">"/delete"</span>&gt;</span>Delete everything<span class="tag">&lt;/<span class="title">a</span>&gt;</span></code></pre>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-7">
+    <section class="slide-content"><h2 id="primeros-pasos">Primeros pasos</h2>
+<pre><code class="lang-xml">
+
+<span class="tag">&lt;<span class="title">script</span>&gt;</span><span class="javascript">
+  confirmDelete = <span class="keyword">function</span>() {
+    <span class="keyword">return</span> confirm(<span class="string">'Are you sure?'</span>);
+  }
+</span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+
+<span class="tag">&lt;<span class="title">a</span> <span class="attribute">onclick</span>=<span class="value">"confirmDelete"</span> <span class="attribute">href</span>=<span class="value">"/delete"</span>&gt;</span>Delete everything<span class="tag">&lt;/<span class="title">a</span>&gt;</span></code></pre>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-8">
+    <section class="slide-content"><h2 id="segundos-pasos">Segundos pasos</h2>
+<pre><code class="lang-xml">
+
+<span class="tag">&lt;<span class="title">a</span> <span class="attribute">id</span>=<span class="value">"delete-link"</span> <span class="attribute">href</span>=<span class="value">"/delete"</span>&gt;</span>Delete everything<span class="tag">&lt;/<span class="title">a</span>&gt;</span>
+
+<span class="tag">&lt;<span class="title">script</span>&gt;</span><span class="javascript">
+  <span class="comment">// Order matters</span>
+  document.getElementById(<span class="string">'delete-link'</span>).onclick = <span class="keyword">function</span>() {
+    <span class="keyword">return</span> confirm(<span class="string">'Are you sure?'</span>);
+  }
+</span><span class="tag">&lt;/<span class="title">script</span>&gt;</span></code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-9">
+    <section class="slide-content"><h2 id="infinitos-pasos-br-todos-mal-o-regular-">Infinitos pasos,<br/>todos mal (o regular)</h2>
+<h3 id="browser-wars-dom-apis-hell-">Browser wars (DOM APIs&#39; hell)</h3>
+<h3 id="poluci-n-del-espacio-global-modularidad-cero-">Polución del espacio global (modularidad cero)</h3>
+<h3 id="-rendimiento-eso-qu-es-">¿Rendimiento? ¿eso qué es?</h3>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-10">
+    <section class="slide-content"><h2 id="librer-as-to-the-rescue">Librerías to the rescue</h2>
+<h3 id="prototype">Prototype</h3>
+<h3 id="dojo">Dojo</h3>
+<h3 id="mootools">MooTools</h3>
+<h3 id="yui">YUI</h3>
+<h3 id="pero-sobre-todo-__jquery__">pero sobre todo <strong>jQuery</strong></h3>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-11">
+    <section class="slide-content"><h2 id="the-way-of-the-jquery">The way of the jQuery</h2>
+<pre><code class="lang-xml">
+<span class="tag">&lt;<span class="title">script</span>&gt;</span><span class="javascript">
+$(<span class="keyword">function</span>() {
+  $(<span class="string">'.delete-link'</span>).on(<span class="string">'click'</span>, <span class="keyword">function</span>(event) {
+    <span class="keyword">if</span> (!confirm(<span class="string">'Are you sure?'</span>)) {
+      event.preventDefault();
+      alert(<span class="string">"Saved by the bell!"</span>);
+    }
+  });
+});
+</span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+
+<span class="tag">&lt;<span class="title">a</span> <span class="attribute">class</span>=<span class="value">"delete-link"</span> <span class="attribute">href</span>=<span class="value">"/delete_all"</span>&gt;</span>Delete everything<span class="tag">&lt;/<span class="title">a</span>&gt;</span>
+<span class="tag">&lt;<span class="title">a</span> <span class="attribute">class</span>=<span class="value">"delete-link"</span> <span class="attribute">href</span>=<span class="value">"/delete_some"</span>&gt;</span>Delete something<span class="tag">&lt;/<span class="title">a</span>&gt;</span></code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-12">
+    <section class="slide-content"><h2 id="js-y-jquery-correcto-pero-">JS y jQuery correcto, pero...</h2>
+<h3 id="no-es-eficiente">No es eficiente</h3>
+<h3 id="no-es-modular">No es modular</h3>
+<h3 id="acoplado-al-dom-br-no-resiste-modificaciones-">Acoplado al DOM<br/>(no resiste modificaciones)</h3>
+<h3 id="un-pel-n-espagueti">Un pelín espagueti</h3>
+</section>
+  </div>
+  <div class="slide hidden  section" id="slide-13">
+    <section class="slide-content"><h2 id="recetas-para-hacer-lasa-a">Recetas para hacer lasaña</h2>
+<h3 id="-a-adir-una-capa-m-s-">(añadir una capa más)</h3>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-14">
+    <section class="slide-content"><h2 id="no-usar-el-tag-lt-script-gt-br-con-contenido">No usar el tag &lt;script&gt;<br/>con contenido</h2>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-15">
+    <section class="slide-content"><h2 id="choose-the-most-convenient">Choose the most convenient</h2>
+<h3 id="m-ltiples-src-br-devel-only-y-ojo-a-las-dependencias-">Múltiples src<br>(devel only y ojo a las dependencias)</h3>
+<h3 id="preprocesadores-y-empaquetado">Preprocesadores y empaquetado</h3>
+<h3 id="gestores-de-dependencias-br-carga-d-namica-">Gestores de dependencias<br>(carga dínamica)</h3>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-16">
+    <section class="slide-content"><h2 id="iifes-y-module-pattern">IIFEs y Module pattern</h2>
+<h3 id="no-polucionar-el-espacio-global">No polucionar el espacio global</h3>
+<h3 id="encapsular-estado-y-publicar-apis">Encapsular estado y publicar APIs</h3>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-17">
+    <section class="slide-content"><h2 id="iife-module-pattern">IIFE + Module Pattern</h2>
+<pre><code class="lang-javascript"><span class="keyword">var</span> counter = (<span class="keyword">function</span>() {
+  <span class="keyword">var</span> counter = <span class="number">0</span>;
+
+  <span class="keyword">var</span> inc = <span class="keyword">function</span>() {
+    counter += <span class="number">1</span>;
+  };
+
+  <span class="keyword">var</span> value = <span class="keyword">function</span>() {
+    <span class="keyword">return</span> counter;
+  }
+
+  <span class="keyword">return</span> {
+    inc: inc,
+    value: value,
+  }
+})();
+
+counter.inc();
+console.log(counter.value()); <span class="comment">// 1</span></code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-18">
+    <section class="slide-content"><h2 id="no-usar-callbacks-inline">No usar callbacks inline</h2>
+<h3 id="-dentro-de-un-orden-">(dentro de un orden ;)</h3>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-19">
+    <section class="slide-content"><h2 id="espagueti-anonymous-callbacks">Espagueti (anonymous) callbacks</h2>
+<pre><code class="lang-javascript">
+
+$(<span class="string">'.link'</span>).on(<span class="string">'click'</span>, <span class="keyword">function</span>(event) {
+  event.preventDefault();
+  $.get(<span class="string">'/data.html'</span>, <span class="keyword">function</span>(html) {
+    $(<span class="string">'.target'</span>).html(html);
+  };
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-20">
+    <section class="slide-content"><h2 id="callback-functions">Callback functions</h2>
+<pre><code class="lang-javascript">
+
+ <span class="keyword">var</span> loadCallback = <span class="keyword">function</span>(html) {
+   $(<span class="string">'.target'</span>).html(html);
+ };
+
+ <span class="keyword">var</span> clickCallback = <span class="keyword">function</span>(event) {
+   event.preventDefault();
+   $.get(<span class="string">'/data.html'</span>, loadCallback);
+ };
+
+ $(<span class="string">'link'</span>).on(<span class="string">'click'</span>, clickCallback);</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-21">
+    <section class="slide-content"><h2 id="usar-promesas">Usar promesas</h2>
+<h3 id="-no-solo-para-llamadas-ajax-">(no solo para llamadas AJAX)</h3>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-22">
+    <section class="slide-content"><h2 id="promesa-ajax">Promesa AJAX</h2>
+<pre><code class="lang-javascript">
+
+<span class="keyword">var</span> clickCallback = <span class="keyword">function</span>(event) {
+  event.preventDefault();
+  <span class="keyword">var</span> promise = $.get(<span class="string">'/data.html'</span>);
+  promise.done(doneCallback);
+}
+
+<span class="keyword">var</span> doneCallback = <span class="keyword">function</span>(html) {
+  $(<span class="string">'.target'</span>).html(html);
+}
+
+$(<span class="string">'.link'</span>).on(<span class="string">'click'</span>, clickCallback);</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-23">
+    <section class="slide-content"><h2 id="no-veo-la-diferencia">No veo la diferencia</h2>
+<p><img src="http://rack.0.mshcdn.com/media/ZgkyMDEzLzA2LzEzLzM3L0FkdmVudHVyZVRpLjM4MzhmLmdpZgpwCXRodW1iCTEyMDB4OTYwMD4/16390650/874/Adventure-Time.gif" alt=""></p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-24">
+    <section class="slide-content"><h2 id="hay-diferencias">Hay diferencias</h2>
+<h3 id="el-evento-es-un-suceso">el evento es un suceso</h3>
+<h3 id="la-promesa-es-un-proceso">la promesa es un proceso</h3>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-25">
+    <section class="slide-content"><h2 id="independencia-del-momento">Independencia del momento</h2>
+<h3 id="el-evento-no-la-tiene">el evento no la tiene</h3>
+<h3 id="la-promesa-s-">la promesa sí</h3>
+<h3 id="llamada-vs-whatsapp">llamada vs whatsapp</h3>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-26">
+    <section class="slide-content"><h2 id="-seudoc-digo-de-inicializaci-n-evento">¿seudocódigo? de inicialización + evento</h2>
+<pre><code class="lang-javascript">
+
+
+service.initialize = <span class="keyword">function</span>() {
+  async_code_block {
+    trigger(<span class="string">'init'</span>);
+  }
+};
+
+service.initialize();
+
+<span class="comment">// ... unknown amount of time passes ...</span>
+
+service.on(<span class="string">'init'</span>, callback); <span class="comment">// maybe called</span></code></pre>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-27">
+    <section class="slide-content"><h2 id="-seudoc-digo-de-inicializaci-n-promesa">¿seudocódigo? de inicialización + promesa</h2>
+<pre><code class="lang-javascript">
+
+
+service.initialize = <span class="keyword">function</span>() {
+  <span class="keyword">this</span>.promise = <span class="keyword">new</span> Promise();
+  async_code_block {
+    <span class="keyword">this</span>.promise.resolve();
+  }
+}
+
+service.initialize();
+
+<span class="comment">// ... unknown amount of time passes ...</span>
+
+service.promise.done(callback); <span class="comment">// always called</span></code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-28">
+    <section class="slide-content"><h2 id="m-s-diferencias">Más diferencias</h2>
+<h3 id="las-promesas-procesos-pueden-encadenarse-y-paralelizarse">las promesas (procesos) pueden encadenarse y paralelizarse</h3>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-29">
+    <section class="slide-content"><h2 id="peticiones-paralelas-the-shitty-way">Peticiones paralelas: the shitty way</h2>
+<pre><code class="lang-javascript">
+<span class="keyword">var</span> loaded = <span class="number">0</span>, data1, data2;
+
+<span class="keyword">var</span> doneCallback = <span class="keyword">function</span>() {
+  <span class="keyword">if</span> (loaded === <span class="number">2</span>) {
+    console.log(data1, data2);
+  }
+}
+
+$.get(<span class="string">'/first_data.json'</span>, <span class="keyword">function</span>(data) {
+  data1 = data;
+  loaded += <span class="number">1</span>;
+  doneCallback();
+})
+
+$.get(<span class="string">'/second_data.json'</span>, <span class="keyword">function</span>(data) {
+  data2 = data;
+  loaded += <span class="number">1</span>;
+  doneCallback();
+})</code></pre>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-30">
+    <section class="slide-content"><h2 id="peticiones-paralelas-the-cool-way">Peticiones paralelas: the cool way</h2>
+<pre><code class="lang-javascript">
+
+
+<span class="keyword">var</span> doneCallback = <span class="keyword">function</span>(data1, data2) {
+  console.log(data1, data2);
+})
+
+<span class="keyword">var</span> promise1 = $.get(<span class="string">'/first_data.json'</span>);
+<span class="keyword">var</span> promise2 = $.get(<span class="string">'/second_data.json'</span>);
+
+$.when(promise1, promise2).then(doneCallback);</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-31">
+    <section class="slide-content"><h2 id="delegaci-n-de-eventos">Delegación de eventos</h2>
+<h3 id="los-eventos-del-dom-br-fluyen-jer-rquicamente">Los eventos del DOM<br/>fluyen jerárquicamente</h3>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-32">
+    <section class="slide-content"><h2 id="handlers-and-callbacks">Handlers and callbacks</h2>
+<pre><code class="lang-javascript">
+<span class="comment">// n handlers, n callbacks</span>
+$(<span class="string">'a'</span>).on(<span class="string">'click'</span>, <span class="keyword">function</span>() {
+  <span class="comment">// ...</span>
+});
+
+
+<span class="keyword">var</span> callback = <span class="keyword">function</span>(event) {
+  <span class="comment">// ...</span>
+}
+
+<span class="comment">// n handlers, 1 callback</span>
+$(<span class="string">'a'</span>).on(<span class="string">'click'</span>, callback);
+
+<span class="comment">// 1 handler, 1 callback</span>
+$(<span class="string">'body'</span>).on(<span class="string">'click'</span>, <span class="string">'a'</span>, callback);</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-33">
+    <section class="slide-content"><h2 id="desacoplarnos-br-del-dom">Desacoplarnos<br/>del DOM</h2>
+<h3 id="-desacoplarse-del-markup-">(desacoplarse del markup)</h3>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-34">
+    <section class="slide-content"><h2 id="un-ejemplo">Un ejemplo</h2>
+<h3 id="componente-que-cuenta-clicks-br-qu-original-">Componente que cuenta clicks<br/>(¡qué original!)</h3>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-35">
+    <section class="slide-content"><h2 id="el-html">El HTML</h2>
+<pre><code class="lang-xml">
+
+
+<span class="tag">&lt;<span class="title">p</span> <span class="attribute">class</span>=<span class="value">"counter"</span>&gt;</span>0<span class="tag">&lt;/<span class="title">p</span>&gt;</span>
+<span class="tag">&lt;<span class="title">a</span> <span class="attribute">class</span>=<span class="value">"countable"</span> <span class="attribute">href</span>=<span class="value">"#"</span>&gt;</span>Link 1<span class="tag">&lt;/<span class="title">a</span>&gt;</span>
+<span class="tag">&lt;<span class="title">a</span> <span class="attribute">class</span>=<span class="value">"countable"</span> <span class="attribute">href</span>=<span class="value">"#"</span>&gt;</span>Link 2<span class="tag">&lt;/<span class="title">a</span>&gt;</span></code></pre>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-36">
+    <section class="slide-content"><h2 id="the-fast-way-funciona-pero-">The fast way: funciona, pero...</h2>
+<pre><code class="lang-javascript">
+
+
+$(<span class="keyword">function</span>() {
+  <span class="keyword">var</span> count = <span class="number">0</span>,
+      $counter = $(<span class="string">'.counter'</span>);
+
+  $(<span class="string">'.countable'</span>).on(<span class="string">'click'</span>, <span class="keyword">function</span>() {
+    count += <span class="number">1</span>;
+    $counter.html(count);
+  });
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-37">
+    <section class="slide-content"><h2 id="seleccionar-el-nodo-adecuado">Seleccionar el nodo adecuado</h2>
+<h3 id="-adecuadamente-">(adecuadamente)</h3>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-38">
+    <section class="slide-content"><h2 id="en-busca-del-selector-perdido">En busca del selector perdido</h2>
+<pre><code class="lang-javascript">
+
+$(<span class="keyword">function</span>() {
+  $(<span class="string">'#countable'</span>).on ... <span class="comment">// Mal</span>
+
+  $(<span class="string">'.countable'</span>).on ... <span class="comment">// Regular</span>
+
+  $(<span class="string">'.js-countable'</span>).on ... <span class="comment">// Algo mejor</span>
+
+  $(<span class="string">'[data-role~=countable]'</span>).on ...  <span class="comment">// Perito!</span>
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-39">
+    <section class="slide-content"><h2 id="el-html-usando-data-xxx">El HTML usando data-xxx</h2>
+<pre><code class="lang-xml">
+
+
+
+<span class="tag">&lt;<span class="title">p</span> <span class="attribute">data-role</span>=<span class="value">"counter"</span>&gt;</span>0<span class="tag">&lt;/<span class="title">p</span>&gt;</span>
+<span class="tag">&lt;<span class="title">a</span> <span class="attribute">data-role</span>=<span class="value">"countable"</span> <span class="attribute">href</span>=<span class="value">"#"</span>&gt;</span>Link 1<span class="tag">&lt;/<span class="title">a</span>&gt;</span>
+<span class="tag">&lt;<span class="title">a</span> <span class="attribute">data-role</span>=<span class="value">"countable"</span> <span class="attribute">href</span>=<span class="value">"#"</span>&gt;</span>Link 2<span class="tag">&lt;/<span class="title">a</span>&gt;</span></code></pre>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-40">
+    <section class="slide-content"><h2 id="js-usando-data-xxx">JS usando data-xxx</h2>
+<pre><code class="lang-javascript">
+
+
+$(<span class="keyword">function</span>() {
+  <span class="keyword">var</span> count = <span class="number">0</span>,
+      $counter = $(<span class="string">'[data-role~=counter]'</span>);
+
+  $(<span class="string">'[data-role=countable]'</span>).on(<span class="string">'click'</span>, <span class="keyword">function</span>() {
+    count += <span class="number">1</span>;
+    $counter.html(count);
+  });
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-41">
+    <section class="slide-content"><h2 id="separemos-la-l-gica-br-en-un-componente">Separemos la lógica<br/>en un componente</h2>
+<h3 id="no-nos-aisla-del-dom-br-pero-nos-ayudar-luego-">No nos aisla del DOM,<br/>pero nos ayudará luego :)</h3>
+<h3 id="y-har-nuestro-c-digo-reusable-d">Y hará nuestro código reusable :D</h3>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-42">
+    <section class="slide-content"><h2 id="un-componente">Un componente</h2>
+<pre><code class="lang-javascript">
+<span class="keyword">var</span> Counter = <span class="keyword">function</span>($counter, $links) {
+  <span class="keyword">this</span>.count = <span class="number">0</span>;
+  <span class="keyword">this</span>.$counter = $counter;
+  <span class="keyword">this</span>.$links = $links;
+
+  <span class="keyword">var</span> that = <span class="keyword">this</span>;
+
+  $links.on(<span class="string">'click'</span>, <span class="keyword">function</span>() {
+    that.count += <span class="number">1</span>;
+    that.$counter(that.count);
+  };
+};
+
+$(<span class="keyword">function</span>() {
+  <span class="keyword">new</span> Counter($(<span class="string">'[data-role~=counter]'</span>),
+    $(<span class="string">'[data-role~=countable]'</span>));
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-43">
+    <section class="slide-content"><h2 id="seguimos-un-poco-br-pegados-al-dom">Seguimos un poco<br/>pegados al DOM</h2>
+<h3 id="a-adamos-otra-capa">añadamos otra capa</h3>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-44">
+    <section class="slide-content"><h2 id="un-wrapper-para-encapsular-la-manipulaci-n-dom">Un wrapper para encapsular la manipulación DOM</h2>
+<pre><code class="lang-javascript">
+
+
+<span class="keyword">var</span> CounterDom = <span class="keyword">function</span>($node) {
+  <span class="keyword">this</span>.$node = $node;
+};
+
+CounterDom.prototype.setCount = <span class="keyword">function</span>(count) {
+  <span class="keyword">this</span>.$node.html(count);
+}</code></pre>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-45">
+    <section class="slide-content"><h2 id="usando-el-wrapper">Usando el wrapper</h2>
+<pre><code class="lang-javascript">
+<span class="keyword">var</span> Counter = <span class="keyword">function</span>(counterDom, $links) {
+  <span class="keyword">this</span>.count = <span class="number">0</span>;
+  <span class="keyword">this</span>.counterDom = counterDom;
+  <span class="keyword">this</span>.$links = $links;
+
+  <span class="keyword">var</span> that = <span class="keyword">this</span>;
+
+  $links.on(<span class="string">'click'</span>, <span class="keyword">function</span>() {
+    that.count += <span class="number">1</span>;
+    that.counterDom.setCount(<span class="keyword">this</span>.count);
+  };
+};
+
+$(<span class="keyword">function</span>() {
+  <span class="keyword">var</span> counterDom = <span class="keyword">new</span> CounterDom($(<span class="string">'[data-role~=counter]'</span>));
+  <span class="keyword">new</span> Counter(counterDom, $(<span class="string">'[data-role~=countable]'</span>));
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-46">
+    <section class="slide-content"><h2 id="un-wrapper-para-encapsular-eventos-del-dom">Un wrapper para encapsular eventos del DOM</h2>
+<pre><code class="lang-javascript">
+
+
+<span class="keyword">var</span> CountableDom = <span class="keyword">function</span>($node) {
+  <span class="keyword">this</span>.$node = $node;
+};
+
+CountableDom.prototype.onInteraction = <span class="keyword">function</span>(callback) {
+  <span class="keyword">this</span>.$node.on(<span class="string">'click'</span>, <span class="keyword">function</span>(event) { callback(); }
+}</code></pre>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-47">
+    <section class="slide-content"><h2 id="usando-el-wrapper">Usando el wrapper</h2>
+<pre><code class="lang-javascript">
+<span class="keyword">var</span> Counter = <span class="keyword">function</span>(counterDom, countableDom) {
+  <span class="keyword">this</span>.count = <span class="number">0</span>;
+  <span class="keyword">this</span>.counterDom = counterDom;
+  <span class="keyword">this</span>.countableDom = countableDom;
+
+  <span class="keyword">var</span> that = <span class="keyword">this</span>;
+
+  countableDom.onInteraction(<span class="keyword">function</span>() {
+    that.count += <span class="number">1</span>;
+    that.counterDom.setCount(<span class="keyword">this</span>.count);
+  });
+};
+
+$(<span class="keyword">function</span>() {
+  <span class="keyword">var</span> counterDom = <span class="keyword">new</span> CounterDom($(<span class="string">'[data-role~=counter]'</span>));
+  <span class="keyword">var</span> countableDom = <span class="keyword">new</span> CountableDom($(<span class="string">'[data-role~=countable]'</span>));
+  <span class="keyword">new</span> Counter(counterDom, countableDom);
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-48">
+    <section class="slide-content"><h2 id="ventajas">Ventajas</h2>
+<h3 id="no-depender-de-jquery-">No depender de jQuery ;)</h3>
+<h3 id="testear-sin-depender-del-dom">Testear sin depender del DOM</h3>
+<h3 id="dom-intercambiable">DOM intercambiable</h3>
+</section>
+  </div>
+  <div class="slide hidden  code sligthly-smaller" id="slide-49">
+    <section class="slide-content"><h2 id="test-al-rico-mock-de-pi-a-para-el-ni-o-y-la-ni-a">Test al rico mock de piña para el niño y la niña</h2>
+<pre><code class="lang-javascript">describe(<span class="string">'Counter'</span>, <span class="keyword">function</span>() {
+
+  <span class="keyword">var</span> countableDomMock = {
+    onInteraction : <span class="keyword">function</span>(callback) {
+      <span class="keyword">this</span>.cb = callback;
+    }
+  }
+
+  <span class="keyword">var</span> counterDomMock = {
+    setCount: <span class="keyword">function</span>(value) {
+      <span class="keyword">this</span>.value = value;
+    }
+  }
+
+  counter = <span class="keyword">new</span> Counter(counterDomMock, countableDomMock);
+
+  it(<span class="string">'counts clicks'</span>, <span class="keyword">function</span>() {
+    countableDomMock.cb(); <span class="comment">// mock interaction</span>
+    expect(counterDomMock.value).toEqual(<span class="number">1</span>);
+  });
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-50">
+    <section class="slide-content"><h2 id="checkboxes-en-lugar-de-enlaces">Checkboxes en lugar de enlaces</h2>
+<pre><code class="lang-xml">
+<span class="tag">&lt;<span class="title">p</span> <span class="attribute">data-role</span>=<span class="value">"counter"</span>&gt;</span>0<span class="tag">&lt;/<span class="title">p</span>&gt;</span>
+<span class="tag">&lt;<span class="title">label</span>&gt;</span>
+  <span class="tag">&lt;<span class="title">input</span> <span class="attribute">type</span>=<span class="value">"checkbox"</span> <span class="attribute">data-role</span>=<span class="value">"countable"</span>/&gt;</span> Check 1
+<span class="tag">&lt;/<span class="title">label</span>&gt;</span>
+<span class="tag">&lt;<span class="title">label</span>&gt;</span>
+  <span class="tag">&lt;<span class="title">input</span> <span class="attribute">type</span>=<span class="value">"checkbox"</span> <span class="attribute">data-role</span>=<span class="value">"countable"</span>/&gt;</span> Check 2
+<span class="tag">&lt;/<span class="title">label</span>&gt;</span></code></pre>
+<pre><code class="lang-javascript">
+
+<span class="keyword">var</span> CountableDom = <span class="keyword">function</span>($node) {
+  <span class="keyword">this</span>.$node = $node;
+};
+
+CountableDom.prototype.onInteraction = <span class="keyword">function</span>(callback) {
+  <span class="keyword">this</span>.$node.on(<span class="string">'change'</span>, <span class="keyword">function</span>(event) { callback(); });
+};</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-51">
+    <section class="slide-content"><h2 id="relanzar-eventos">Relanzar eventos</h2>
+<h3 id="evento-dom-evento-custom">Evento DOM =&gt; Evento Custom</h3>
+<h3 id="alternativa-para-br-desacoplarse-de-los-eventos">Alternativa para<br/>desacoplarse de los eventos</h3>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-52">
+    <section class="slide-content"><h2 id="relanzando-eventos">Relanzando eventos</h2>
+<pre><code class="lang-javascript">
+<span class="keyword">var</span> CountableDom = <span class="keyword">function</span>($node) {
+    <span class="keyword">this</span>.$node = $node;
+    <span class="keyword">this</span>.$node.on(<span class="string">'click'</span>, <span class="keyword">function</span>() {
+      $node.trigger(<span class="string">'interaction'</span>);
+    });
+};
+
+CountableDom.prototype.on = <span class="keyword">function</span>() {
+  <span class="keyword">this</span>.$node.on.apply(Array.prototype.slice.call(arguments));
+}
+
+<span class="keyword">var</span> Counter = <span class="keyword">function</span>(counterDom, countableDom) {
+  <span class="comment">// ...</span>
+
+  countableDom.on(<span class="string">'interaction'</span>, <span class="keyword">function</span>() {
+    <span class="comment">// ...</span>
+  });
+};</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-53">
+    <section class="slide-content"><h2 id="one-more-step">One more step</h2>
+<h3 id="aislar-el-modelo">Aislar el modelo</h3>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-54">
+    <section class="slide-content"><h2 id="modelo-pojso-">Modelo: ¿POJsO?</h2>
+<pre><code class="lang-javascript">
+
+<span class="keyword">var</span> Count = <span class="keyword">function</span>(initialValue) {
+  <span class="keyword">this</span>.count = initialValue;
+};
+
+Count.prototype.inc = <span class="keyword">function</span>() {
+  <span class="keyword">this</span>.count += <span class="number">1</span>;
+}
+
+Count.prototype.value = <span class="keyword">function</span>() {
+  <span class="keyword">return</span> <span class="keyword">this</span>.count;
+}</code></pre>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-55">
+    <section class="slide-content"><h2 id="usando-el-modelo">Usando el modelo</h2>
+<pre><code class="lang-javascript">
+<span class="keyword">var</span> Counter = <span class="keyword">function</span>(count, counterDom, countableDom) {
+  <span class="keyword">this</span>.count = count;
+  <span class="comment">// ...</span>
+
+  countableDom.onInteraction(<span class="keyword">function</span>() {
+    that.count.increment();
+    that.counterDom.setCount(that.count.value());
+  });
+};
+
+$(<span class="keyword">function</span>() {
+  <span class="keyword">var</span> count = <span class="keyword">new</span> Count(<span class="number">0</span>);
+  <span class="keyword">var</span> counterDom = <span class="keyword">new</span> CounterDom($(<span class="string">'[data-role~=counter]'</span>));
+  <span class="keyword">var</span> countableDom = <span class="keyword">new</span> CountableDom($(<span class="string">'[data-role~=countable]'</span>));
+  <span class="keyword">new</span> Counter(count, counterDom, countableDom);
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden  two-columns" id="slide-56">
+    <section class="slide-content"><ul>
+<li>Count</li>
+<li>XXXDom</li>
+<li>Counter</li>
+<li>MODEL</li>
+<li>VIEW</li>
+<li>CONTROLLER</li>
+</ul>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-57">
+    <section class="slide-content"><h2 id="mvc-ftw-">MVC FTW!</h2>
+<p><img src="http://media.giphy.com/media/pa37AAGzKXoek/giphy.gif" alt=""></p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-58">
+    <section class="slide-content"><h2 id="bus-de-eventos">Bus de eventos</h2>
+<h3 id="-warning-handle-with-care"><strong>WARNING</strong>: handle with care</h3>
+</section>
+  </div>
+  <div class="slide hidden  humongous-code" id="slide-59">
+    <section class="slide-content"><p>window.eventBus = $({});</p>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-60">
+    <section class="slide-content"><h2 id="el-modelo-propaga-por-el-bus-sus-cambios">El modelo propaga por el bus sus cambios</h2>
+<pre><code class="lang-javascript">
+
+
+Count.prototype.inc = <span class="keyword">function</span>() {
+  <span class="keyword">this</span>.count += <span class="number">1</span>;
+  eventBus.trigger(<span class="string">'count.inc'</span>, [ <span class="keyword">this</span>.value() ]);
+};
+
+eventBus.on(<span class="string">'count.inc'</span>, <span class="keyword">function</span>(event, count) {
+  console.log(count);
+};</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-61">
+    <section class="slide-content"><h3 id="-warning-handle-with-care"><strong>WARNING</strong>: handle with care</h3>
+<p><img src="http://www.vibewow.com/wp-content/uploads/2014/09/25.gif" width="550" /></p>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-62">
+    <section class="slide-content"><h2 id="observar-el-modelo">Observar el modelo</h2>
+<h3 id="get-set">get / set</h3>
+<h3 id="object-observe-ecmascript-6-">Object.observe (ECMAScript 6)</h3>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-63">
+    <section class="slide-content"><h2 id="parametrizaci-n">Parametrización</h2>
+<h3 id="pasar-datos-del-markup-al-js">pasar datos del markup al JS</h3>
+<h3 id="data-xxx-y-json">data-xxx y JSON</h3>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-64">
+    <section class="slide-content"><h2 id="data-confirm-message">data-confirm-message</h2>
+<pre><code class="lang-javascript">$.fn.confirmable = <span class="keyword">function</span>() {
+  <span class="keyword">this</span>.each(<span class="keyword">function</span>() {
+    <span class="keyword">var</span> $el = $(<span class="keyword">this</span>);
+    $el.on(<span class="string">'click'</span>, <span class="keyword">function</span>(event) {
+      <span class="keyword">var</span> message = $el.data(<span class="string">'confirm-message'</span>);
+      <span class="keyword">if</span> (!confirm(message)) { <span class="comment">/* .. */</span> }
+    });
+  });
+};
+
+$(<span class="keyword">function</span>() {
+  $(<span class="string">'[data-role~=confirmable]'</span>).confirmable()
+});</code></pre>
+<pre><code class="lang-xml">
+<span class="tag">&lt;<span class="title">a</span> <span class="attribute">data-role</span>=<span class="value">"confirmable"</span>
+   <span class="attribute">data-confirm-message</span>=<span class="value">"Are you sure?"</span>
+   <span class="attribute">href</span>=<span class="value">"/delete"</span>&gt;</span>Delete everything<span class="tag">&lt;/<span class="title">a</span>&gt;</span></code></pre>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-65">
+    <section class="slide-content"><h2 id="valor-inicial-del-contador">Valor inicial del contador</h2>
+<pre><code class="lang-xml">
+
+<span class="tag">&lt;<span class="title">p</span> <span class="attribute">data-role</span>=<span class="value">"counter"</span> <span class="attribute">data-initial-count</span>=<span class="value">"10"</span>&gt;</span>0<span class="tag">&lt;/<span class="title">p</span>&gt;</span></code></pre>
+<pre><code class="lang-javascript">
+
+CounterDom.prototype.getInitialCount = <span class="keyword">function</span>() {
+  <span class="keyword">this</span>.$node.data(<span class="string">'initial-count'</span>);
+}
+
+<span class="keyword">var</span> Counter = <span class="keyword">function</span>(counterDom, countableDom) {
+  <span class="keyword">this</span>.count = counterDom.getInitialCount();
+
+  <span class="comment">// ...</span>
+}</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-66">
+    <section class="slide-content"><h2 id="no-escribir-html-en-el-js">No escribir HTML en el JS</h2>
+<h3 id="usar-plantillas">Usar plantillas</h3>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-67">
+    <section class="slide-content"><h2 id="html-a-pi-on-">HTML &quot;a piñon&quot;</h2>
+<pre><code class="lang-javascript">
+
+
+
+$.get(<span class="string">'/data.json'</span>).done(<span class="keyword">function</span>(data) {
+  $placeHolder.html(<span class="string">'&lt;div&gt;&lt;b&gt;'</span> + data.value + <span class="string">'&lt;/b&gt;&lt;/div&gt;'</span>);
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden  code" id="slide-68">
+    <section class="slide-content"><h2 id="plantillas-handlebars-por-ejemplo-">Plantillas (Handlebars, por ejemplo)</h2>
+<pre><code class="lang-xml">
+
+
+<span class="tag">&lt;<span class="title">script</span> <span class="attribute">id</span>=<span class="value">"my-template"</span> <span class="attribute">type</span>=<span class="value">"text/x-handlebars-template"</span>&gt;</span><span class="javascript">
+  &lt;div&gt;<span class="xml"><span class="tag">&lt;<span class="title">b</span>&gt;</span>{{ value }}<span class="tag">&lt;/<span class="title">b</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+</span></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span></code></pre>
+<pre><code class="lang-javascript">
+
+
+$.get(<span class="string">'/data.json'</span>).done(<span class="keyword">function</span>(data) {
+  <span class="keyword">var</span> source = $(<span class="string">'#my-template'</span>).html(),
+      template = Handlebars.compile(source);
+
+  $placeHolder.html(template({value: data.value}));
+});</code></pre>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-69">
+    <section class="slide-content"><h2 id="__beware__"><strong>Beware</strong></h2>
+<h3 id="mejor-no-tener-las-br-plantillas-en-el-html">Mejor no tener las<br/>plantillas en el HTML</h3>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-70">
+    <section class="slide-content"><h2 id="plantillas-js">Plantillas JS</h2>
+<h3 id="handlebars">Handlebars</h3>
+<h3 id="mustache">Mustache</h3>
+<h3 id="eco">Eco</h3>
+<h3 id="jade">Jade</h3>
+<h3 id="-">...</h3>
+</section>
+  </div>
+  <div class="slide hidden  section" id="slide-71">
+    <section class="slide-content"><h2 id="t-cnicas-top-chef">Técnicas Top Chef</h2>
+<h3 id="el-detalle-lo-dejamos-br-para-el-pr-ximo-cap-tulo">El detalle lo dejamos<br/>para el próximo capítulo</h3>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-72">
+    <section class="slide-content"><h2 id="esteroides-js">Esteroides JS</h2>
+<h3 id="underscore">Underscore</h3>
+<h3 id="lodash">LoDash</h3>
+<h3 id="coffeescript-typescript-">CoffeeScript, TypeScript ...</h3>
+<h3 id="-">...</h3>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-73">
+    <section class="slide-content"><h2 id="frameworks-mvc">Frameworks MVC</h2>
+<h3 id="angular">Angular</h3>
+<h3 id="ember">Ember</h3>
+<h3 id="react">React</h3>
+<h3 id="backbone">Backbone</h3>
+<h3 id="-">...</h3>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-74">
+    <section class="slide-content"><h2 id="dependencias">Dependencias</h2>
+<h3 id="amd">AMD</h3>
+<h3 id="commonjs">CommonJS</h3>
+<h3 id="harmony">Harmony</h3>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-75">
+    <section class="slide-content"><h2 id="tools">Tools</h2>
+<h3 id="node-npm">Node/Npm</h3>
+<h3 id="bower-vs-browserify">Bower vs Browserify</h3>
+<h3 id="gulp-vs-grunt">Gulp vs Grunt</h3>
+<h3 id="yeoman-vs-lineman">Yeoman vs Lineman</h3>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-76">
+    <section class="slide-content"><h2 id="ecmascript-6">ECMAScript 6</h2>
+<h3 id="let">let</h3>
+<h3 id="fat-arrow">fat arrow</h3>
+<h3 id="classes">classes</h3>
+<h3 id="interpolation">interpolation</h3>
+<h3 id="promises">promises</h3>
+<h3 id="modules">modules</h3>
+<h3 id="-">...</h3>
+<p><a href="http://www.2ality.com/2014/08/es6-today.html">http://www.2ality.com/2014/08/es6-today.html</a></p>
+</section>
+  </div>
+  <div class="slide hidden  section" id="slide-77">
+    <section class="slide-content"><h1 id="-preguntas-">¿Preguntas?</h1>
+</section>
+  </div>
+  <div class="slide hidden" id="slide-78">
+    <section class="slide-content"><h1 id="-viva-la-lasa-a-">¡Viva la lasaña!</h1>
+<p><img src="http://img.pandawhale.com/28306-Garfield-lasagna-gif-EzgK.gif" alt=""></p>
+</section>
+  </div>
+
+
+
+  <script type="text/javascript">
+    /**
+ * Returns the current page number of the presentation.
+ */
+function currentPosition() {
+  return parseInt(document.querySelector('.slide:not(.hidden)').id.slice(6));
+}
+
+
+/**
+ * Navigates forward n pages
+ * If n is negative, we will navigate in reverse
+ */
+function navigate(n) {
+  var position = currentPosition();
+  var numSlides = document.getElementsByClassName('slide').length;
+
+  /* Positions are 1-indexed, so we need to add and subtract 1 */
+  var nextPosition = (position - 1 + n) % numSlides + 1;
+
+  /* Normalize nextPosition in-case of a negative modulo result */
+  nextPosition = (nextPosition - 1 + numSlides) % numSlides + 1;
+
+  document.getElementById('slide-' + position).classList.add('hidden');
+  document.getElementById('slide-' + nextPosition).classList.remove('hidden');
+
+  updateProgress();
+  updateURL();
+  updateTabIndex();
+}
+
+
+/**
+ * Updates the current URL to include a hashtag of the current page number.
+ */
+function updateURL() {
+  window.history.replaceState({} , null, '#' + currentPosition());
+}
+
+
+/**
+ * Sets the progress indicator.
+ */
+function updateProgress() {
+  var progressBar = document.querySelector('.progress-bar');
+
+  if (progressBar !== null) {
+    var numSlides = document.getElementsByClassName('slide').length;
+    var position = currentPosition() - 1;
+    var percent = (numSlides === 1) ? 100 : 100 * position / (numSlides - 1);
+    progressBar.style.width = percent.toString() + '%';
+  }
+}
+
+
+/**
+ * Removes tabindex property from all links on the current slide, sets
+ * tabindex = -1 for all links on other slides. Prevents slides from appearing
+ * out of control.
+ */
+function updateTabIndex() {
+  var allLinks = document.querySelectorAll('.slide a');
+  var position = currentPosition();
+  var currentPageLinks = document.getElementById('slide-' + position).querySelectorAll('a');
+  var i;
+
+  for (i = 0; i < allLinks.length; i++) {
+    allLinks[i].setAttribute('tabindex', -1);
+  }
+
+  for (i = 0; i < currentPageLinks.length; i++) {
+    currentPageLinks[i].removeAttribute('tabindex');
+  }
+}
+
+/**
+ * Determines whether or not we are currently in full screen mode
+ */
+function isFullScreen() {
+  return document.fullscreenElement ||
+         document.mozFullScreenElement ||
+         document.webkitFullscreenElement ||
+         document.msFullscreenElement;
+}
+
+/**
+ * Toggle fullScreen mode on document element.
+ * Works on chrome (>= 15), firefox (>= 9), ie (>= 11), opera(>= 12.1), safari (>= 5).
+ */
+function toggleFullScreen() {
+  /* Convenient renames */
+  var docElem = document.documentElement;
+  var doc = document;
+
+  docElem.requestFullscreen =
+      docElem.requestFullscreen ||
+      docElem.msRequestFullscreen ||
+      docElem.mozRequestFullScreen ||
+      docElem.webkitRequestFullscreen.bind(docElem, Element.ALLOW_KEYBOARD_INPUT);
+
+  doc.exitFullscreen =
+      doc.exitFullscreen ||
+      doc.msExitFullscreen ||
+      doc.mozCancelFullScreen ||
+      doc.webkitExitFullscreen;
+
+  isFullScreen() ? doc.exitFullscreen() : docElem.requestFullscreen();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  // Update the tabindex to prevent weird slide transitioning
+  updateTabIndex();
+
+  // If the location hash specifies a page number, go to it.
+  var page = window.location.hash.slice(1);
+  if (page) {
+    navigate(parseInt(page) - 1);
+  }
+
+  document.onkeydown = function (e) {
+    var kc = e.keyCode;
+
+    // left, down, H, J, backspace, PgUp - BACK
+    // up, right, K, L, space, PgDn - FORWARD
+    // enter - FULLSCREEN
+    if (kc === 37 || kc === 40 || kc === 8 || kc === 72 || kc === 74 || kc === 33) {
+      navigate(-1);
+    } else if (kc === 38 || kc === 39 || kc === 32 || kc === 75 || kc === 76 || kc === 34) {
+      navigate(1);
+    } else if (kc === 13) {
+      toggleFullScreen();
+    }
+  };
+
+  if (document.querySelector('.next') && document.querySelector('.prev')) {
+    document.querySelector('.next').onclick = function (e) {
+      e.preventDefault();
+      navigate(1);
+    };
+
+    document.querySelector('.prev').onclick = function (e) {
+      e.preventDefault();
+      navigate(-1);
+    };
+  }
+});
+
+
+  </script>
+</body>
+</html>
